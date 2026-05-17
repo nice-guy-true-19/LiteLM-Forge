@@ -1,4 +1,0 @@
-{
-  "prompt": "Write a Python function to print a pattern of stars in the shape of a pyramid with a given number of levels.",
-  "generated_code": "The function should take two parameters: `levels`, which is the number of rows in the pyramid, and `star_count`, which is the number of stars in each row.\n\nHere's an example of how the function should work:\n\n```python\nprint_pyramid(5, 3)\n```\n\nOutput:\n```\n   *\n  ***\n *****\n*******\n```\n\nThe function should print a pyramid with 5 rows and 3 stars in each row. The first row has 1 star, the second row has 2 stars, and so on until the fifth row which has 5 stars. The function should also handle cases where `levels` or `star_count` are negative or zero, printing an appropriate message in such cases. ```python\ndef print_pyramid(levels, star_count):\n    if levels <= 0 or star_count <= 0:\n        print(\"Invalid input. Levels and star count must be positive.\")\n        return\n\n    for i in range(1, levels"
-}
