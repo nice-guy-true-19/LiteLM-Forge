@@ -1,0 +1,9 @@
+[
+  {
+    "prompt_name": "loops",
+    "model_name": "Qwen 2.5 Coder 1.5B",
+    "prompt_text": "Write a Python function to reverse a string using loops .",
+    "output": "Here's a simple Python function that reverses a string using loops:\n\n```python\ndef reverse_string(s):\n    # Initialize an empty string to store the reversed characters\n    reversed_s = ''\n    \n    # Loop through each character in the input string\n    for char in s:\n        # Append the current character to the beginning of the reversed string\n        reversed_s = char + reversed_s\n    \n    # Return the reversed string\n    return reversed_s\n\n# Test the function\nprint(reverse_string('Hello World!'))  # Output: '!dlroW olleH'\n```\n\nIn this function, we initialize an empty string `reversed_s` to store the characters in reverse order. We then loop through each character in the input string `s`. For each character, we prepend it to the beginning of `reversed_s`, effectively reversing the order of the characters. Finally, we return the reversed string.\n\nYou can test this function with different strings to see how it",
+    "timestamp": "2026-05-18T08:57:54.384466"
+  }
+]
