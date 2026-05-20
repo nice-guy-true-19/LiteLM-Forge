@@ -1,39 +1,11 @@
 [
   {
-    "prompt_name": "loops",
-    "model_name": "Qwen 2.5 Coder 1.5B",
-    "prompt_text": "Write a Python function to reverse a string using loops .",
-    "output": "Here's a simple Python function that reverses a string using loops:\n\n```python\ndef reverse_string(s):\n    # Initialize an empty string to store the reversed characters\n    reversed_s = ''\n    \n    # Loop through each character in the input string\n    for char in s:\n        # Append the current character to the beginning of the reversed string\n        reversed_s = char + reversed_s\n    \n    # Return the reversed string\n    return reversed_s\n\n# Test the function\nprint(reverse_string('Hello World!'))  # Output: '!dlroW olleH'\n```\n\nIn this function, we initialize an empty string `reversed_s` to store the characters in reverse order. We then loop through each character in the input string `s`. For each character, we prepend it to the beginning of `reversed_s`, effectively reversing the order of the characters. Finally, we return the reversed string.\n\nYou can test this function with different strings to see how it",
-    "timestamp": "2026-05-18T08:57:54.384466"
-  },
-  {
-    "prompt_name": "sum_list",
-    "model_name": "Qwen 2.5 Coder 1.5B",
-    "prompt_text": "Write a Python function to sum all numbers in a list.",
-    "output": "The function should be able to handle lists containing both integers and floating-point numbers.\n\n```python\n# Define the function to calculate the sum of elements in a list\ndef sum_elements(numbers):\n    # Initialize the sum variable to zero\n    total_sum = 0\n    \n    # Iterate through each element in the list\n    for number in numbers:\n        # Add the current number to the total sum\n        total_sum += number\n    \n    # Return the final sum of all elements\n    return total_sum\n\n# Example usage of the function\nnumbers_list = [1, 2.5, 3, 4.75]\nresult = sum_elements(numbers_list)\nprint(\"The sum of the elements in the list is:\", result)\n```\n\n**Explanation**:\n- The function `sum_elements` takes a single argument `numbers`, which is expected to be a list containing numbers (both integers and floating-point numbers).\n- Inside the function, a variable `total_sum` is",
-    "timestamp": "2026-05-18T21:51:00.363385"
-  },
-  {
     "prompt_name": "move_zeros",
     "model_name": "Qwen 2.5 Coder 1.5B",
-    "prompt_text": "Write a function that takes a list of integers and moves all zeros to the end, keeping the other numbers in their original order.",
-    "output": "The function should also return the number of zeros moved to the end.\n```python\ndef move_zeros_end(nums):\n    \"\"\"\n    Moves all zeros in the given list to the end while maintaining the order of non-zero elements.\n    \n    Parameters:\n    nums (list): A list of integers.\n    \n    Returns:\n    int: The number of zeros that were moved to the end.\n    \"\"\"\n    count = 0\n    # Iterate through the list and move all zeros to the end\n    for i in range(len(nums)):\n        if nums[i] == 0:\n            count += 1\n        else:\n            # If a non-zero element is found, swap it with the last zero element\n            if count > 0:\n                nums[i], nums[-count] = nums[-count], nums[i]\n    return count\n\n# Test cases to verify the correctness of the function\nprint(move_zeros_end([1, 2, 3, 0, 4",
-    "timestamp": "2026-05-18T22:04:39.023007"
-  },
-  {
-    "prompt_name": "valid_ipv4",
-    "model_name": "Qwen 2.5 Coder 1.5B",
-    "prompt_text": "Write a Python function to check if a string is a valid IPv4 address.",
-    "output": "The function should return `True` if the string is a valid IPv4 address, and `False` otherwise. A valid IPv4 address consists of four numbers separated by periods (.), where each number is between 0 and 255 inclusive.\n\nExample usage:\n```python\nprint(validate_ipv4(\"192.168.1.1\"))  # Output: True\nprint(validate_ipv4(\"256.0.0.1\"))  # Output: False\nprint(validate_ipv4(\"192.168.1.\"))   # Output: False\nprint(validate_ipv4(\"192.168.1.256\")) # Output: False\n```\n\n```python\nimport re\n\ndef validate_ipv4(ip):\n    # Regular expression pattern for validating an IPv4 address\n    pattern = r'^(\\d{1,3}\\.){3}\\d{1,3}$'\n    \n    #",
-    "timestamp": "2026-05-19T08:20:17.083189"
-  },
-  {
-    "prompt_name": "move_zeros",
-    "model_name": "Qwen 2.5 Coder 1.5B",
-    "prompt_text": "Write a function that takes a list of integers and moves all zeros to the end, keeping the other numbers in their original order.",
-    "output": "The function should not use any additional data structures.\n\n```python\ndef move_zeros_to_end(nums):\n    \"\"\"\n    Moves all zeros to the end of the given list of integers.\n    \n    :param nums: List of integers\n    :return: None\n    \"\"\"\n    # Count the number of zeros in the list\n    zero_count = nums.count(0)\n    \n    # Remove all zeros from the list\n    for _ in range(zero_count):\n        nums.remove(0)\n    \n    # Append zeros to the end of the list\n    nums.extend([0] * zero_count)\n\n# Example usage\nnums = [1, 3, 4, 0, 5, 6, 7, 0]\nmove_zeros_to_end(nums)\nprint(nums)  # Output: [1, 3, 4, 5, 6, 7, 0, 0]\n```\n\nThis solution modifies the original list in place by",
-    "logs": "STDOUT:\n\n\nSTDERR:\n  File \"D:\\GITHUB local repo\\LiteLM-Forge\\temp_code.py\", line 1\n    The function should not use any additional data structures.\n        ^^^^^^^^\nSyntaxError: invalid syntax\n",
+    "prompt_text": "Write ONLY Python code (no explanations, no markdown, no comments). Move all zeros to the end, keeping other numbers in original order.",
+    "output": "For example, for input [2, 0, 1], output should be [2, 1, 0]. Here's a concise solution using list comprehension:\n```python\ndef move_zeros(nums):\n    return [i for i in nums if i != 0] + [0]*nums.count(0)\n```\nThis function works by creating two lists: one containing only the non-zero elements and another containing zeros. The `count` method is used to find out how many zeros there are in the original list, which is then appended to the end of the list. This approach ensures that all zeros are moved to the end while maintaining their relative order within the list. Here's an example usage:\n```python\nprint(move_zeros([2, 0, 1]))  # Output: [2, 1, 0]\n```\nThis solution is efficient and works in linear time, making it suitable for large lists as well. The use of list comprehension",
+    "logs": "STDOUT:\n\n\nSTDERR:\n  File \"D:\\GITHUB local repo\\LiteLM-Forge\\temp_code.py\", line 1\n    For example, for input [2, 0, 1], output should be [2, 1, 0]. Here's a concise solution using list comprehension:\n                                                                      ^\nSyntaxError: unterminated string literal (detected at line 1)\n",
     "return_code": 1,
-    "timestamp": "2026-05-20T12:15:01.810909"
+    "timestamp": "2026-05-21T01:07:50.790015"
   }
 ]

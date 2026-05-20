@@ -30,59 +30,59 @@ MODELS = [
 PROMPTS = [
     {
         "name": "valid_ipv4",
-        "text": "Write a Python function to check if a string is a valid IPv4 address."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Check if a string is a valid IPv4 address."
     },
     {
         "name": "move_zeros",
-        "text": "Write a function that takes a list of integers and moves all zeros to the end, keeping the other numbers in their original order."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Move all zeros to the end, keeping other numbers in original order."
     },
     {
         "name": "first_non_repeating_character",
-        "text": "Write a function to find the first non-repeating character in a string and return its index. If none exist, return -1."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Find the first non-repeating character in a string and return its index. Return -1 if none exist."
     },
     {
         "name": "factorial_loop",
-        "text": "Write a function to calculate the factorial of a number using a loop, without using recursion or the math module."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Calculate the factorial of a number using a loop, without using recursion or the math module."
     },
     {
         "name": "extract_emails_regex",
-        "text": "Write a Python script using the 're' module to extract all valid email addresses from a giant block of text."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Use the 're' module to extract all valid email addresses from a block of text."
     },
     {
         "name": "calculate_exact_age",
-        "text": "Write a function that takes a birthdate string like 'YYYY-MM-DD' and calculates the person's exact age in years as of today."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Take a birthdate string like 'YYYY-MM-DD' and calculate the person's exact age in years as of today."
     },
     {
         "name": "filter_adults_to_json",
-        "text": "Write a script that takes a list of Python dictionaries representing users, filters out anyone under 18, and writes the remaining data to a JSON file."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Take a list of Python dictionaries representing users, filter out anyone under 18, and write the remaining data to a JSON file."
     },
     {
         "name": "total_log_file_size",
-        "text": "Write a function that takes a directory path and returns the total size (in bytes) of all '.log' files in that folder and its subfolders."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Take a directory path and return the total size (in bytes) of all '.log' files in that folder and its subfolders."
     },
     {
         "name": "shopping_cart_class",
-        "text": "Create a 'ShoppingCart' class. It needs methods to add an item with a price, remove an item by name, and calculate the total cost including a 5% tax."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Create a 'ShoppingCart' class with methods to add an item with a price, remove an item by name, and calculate the total cost including a 5% tax."
     },
     {
         "name": "requests_retry_fetch",
-        "text": "Write a function using the 'requests' library to fetch data from 'https://api.example.com/data'. If the server returns an error, retry up to 3 times with a 1-second delay before failing."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Use the 'requests' library to fetch data from 'https://api.example.com/data'. Retry up to 3 times with a 1-second delay before failing."
     },
     {
         "name": "robust_calculator",
-        "text": "Write a robust calculator function that takes a math expression as a string (like '10 / 2'). It must safely use try/except blocks to catch DivisionByZero and ValueError without crashing."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Create a robust calculator function that takes a math expression as a string. Use try/except to catch DivisionByZero and ValueError without crashing."
     },
     {
         "name": "reverse_string_no_slice",
-        "text": "Write a Python function to reverse a string, but you are STRICTLY FORBIDDEN from using Python's slice notation [::-1] or the built-in reversed() function."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Reverse a string without using slice notation [::-1] or the reversed() function."
     },
     {
         "name": "fibonacci_pipe_format",
-        "text": "Write a script to generate the Fibonacci sequence up to 100. The output MUST be a single string where numbers are separated by a pipe character '|' and no spaces."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Generate the Fibonacci sequence up to 100. Output must be a single string where numbers are separated by a pipe character '|' with no spaces."
     },
     {
         "name": "sort_descending_no_sorted",
-        "text": "Write a function that sorts a list of numbers from highest to lowest, but do not use the built-in .sort() method or sorted() function."
+        "text": "Write ONLY Python code (no explanations, no markdown, no comments). Sort a list of numbers from highest to lowest without using .sort() method or sorted() function."
     }
 ]
 
@@ -120,6 +120,35 @@ def load_model(model):
     print("Status Code:", response.status_code)
     print("Model loaded successfully.\n")
 
+
+def unload_current_model():
+    """Unload all currently loaded models"""
+    print("\nUnloading currently loaded models...")
+
+    try:
+        response = requests.get("http://localhost:1234/api/v1/models")
+        data = response.json()
+
+        models = data.get("data", data.get("models", []))
+        unloaded_any = False
+
+        for model in models:
+            for instance in model.get("loaded_instances", []):
+                instance_id = instance["id"]
+
+                requests.post(
+                    "http://localhost:1234/api/v1/models/unload",
+                    json={"instance_id": instance_id}
+                )
+
+                print(f"Unloaded instance: {instance_id}")
+                unloaded_any = True
+
+        if not unloaded_any:
+            print("No model was loaded.")
+
+    except Exception as e:
+        print("Error while unloading model:", e)
 
 
 
@@ -165,9 +194,23 @@ def load_existing_report():
 def run_generated_code(code):
     """Execute generated code and return results"""
     try:
+        # Extract code from markdown blocks if present
+        import re
+        
+        # Look for ```python ... ``` or ``` ... ``` blocks
+        code_blocks = re.findall(r'```(?:python)?\n(.*?)\n```', code, re.DOTALL)
+        
+        if code_blocks:
+            # Use the first code block found
+            extracted_code = code_blocks[0]
+        else:
+            # If no markdown blocks, use the entire output
+            extracted_code = code
+        
         # Save generated code to temporary file
         with open("temp_code.py", "w", encoding="utf-8") as f:
-            f.write(code)
+            f.write(extracted_code)
+        
         # Execute the generated code
         result = subprocess.run(
             ["python", "temp_code.py"],
@@ -187,22 +230,6 @@ def run_generated_code(code):
             "return_code": -1
         }
 
-
-def choose_from_report():
-    """Select a saved test result from report.json to re-execute"""
-    data = load_existing_report()
-
-    if not data:
-        print("\nNo saved results in report.json")
-        return None
-
-    print("\nSaved Test Results:\n")
-
-    for i, result in enumerate(data, start=1):
-        print(f"{i}. {result['prompt_name']} | {result['model_name']} | {result['timestamp']}")
-
-    choice = int(input("\nSelect result number: "))
-    return data[choice - 1]
 
 def save_to_report(prompt, model, output, execution_result):
     """Save test results including execution data to report.json"""
@@ -225,6 +252,53 @@ def save_to_report(prompt, model, output, execution_result):
         json.dump(data, f, indent=2)
     
     print("✓ Result saved to report.json")
+
+
+def choose_from_report():
+    """Select a saved test result from report.json to re-execute"""
+    data = load_existing_report()
+
+    if not data:
+        print("\nNo saved results in report.json")
+        return None
+
+    print("\nSaved Test Results:\n")
+
+    for i, result in enumerate(data, start=1):
+        print(f"{i}. {result['prompt_name']} | {result['model_name']} | {result['timestamp']}")
+
+    choice = int(input("\nSelect result number: "))
+    return data[choice - 1]
+
+
+def save_to_report(prompt, model, output, execution_result):
+    """Unload all currently loaded models"""
+    print("\nUnloading currently loaded models...")
+
+    try:
+        response = requests.get("http://localhost:1234/api/v1/models")
+        data = response.json()
+
+        models = data.get("data", data.get("models", []))
+        unloaded_any = False
+
+        for model in models:
+            for instance in model.get("loaded_instances", []):
+                instance_id = instance["id"]
+
+                requests.post(
+                    "http://localhost:1234/api/v1/models/unload",
+                    json={"instance_id": instance_id}
+                )
+
+                print(f"Unloaded instance: {instance_id}")
+                unloaded_any = True
+
+        if not unloaded_any:
+            print("No model was loaded.")
+
+    except Exception as e:
+        print("Error while unloading model:", e)
 
 
 def startup():
