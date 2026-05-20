@@ -1,5 +1,7 @@
 import requests
 import json
+import subprocess
+import sys
 from datetime import datetime
 
 # ==========================================
@@ -119,6 +121,8 @@ def load_model(model):
     print("Model loaded successfully.\n")
 
 
+
+
 def choose_prompt():
     print("Available Prompts:\n")
 
@@ -158,70 +162,69 @@ def load_existing_report():
     return data
 
 
-def save_to_report(prompt, model, output):
+def run_generated_code(code):
+    """Execute generated code and return results"""
+    try:
+        # Save generated code to temporary file
+        with open("temp_code.py", "w", encoding="utf-8") as f:
+            f.write(code)
+        # Execute the generated code
+        result = subprocess.run(
+            ["python", "temp_code.py"],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        return {
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "return_code": result.returncode
+        }
+    except Exception as e:
+        return {
+            "stdout": "",
+            "stderr": str(e),
+            "return_code": -1
+        }
+
+
+def choose_from_report():
+    """Select a saved test result from report.json to re-execute"""
     data = load_existing_report()
+
+    if not data:
+        print("\nNo saved results in report.json")
+        return None
+
+    print("\nSaved Test Results:\n")
+
+    for i, result in enumerate(data, start=1):
+        print(f"{i}. {result['prompt_name']} | {result['model_name']} | {result['timestamp']}")
+
+    choice = int(input("\nSelect result number: "))
+    return data[choice - 1]
+
+def save_to_report(prompt, model, output, execution_result):
+    """Save test results including execution data to report.json"""
+    data = load_existing_report()
+
+    # Combine stdout and stderr into logs
+    logs = f"STDOUT:\n{execution_result['stdout']}\n\nSTDERR:\n{execution_result['stderr']}"
 
     data.append({
         "prompt_name": prompt["name"],
         "model_name": model["display_name"],
         "prompt_text": prompt["text"],
         "output": output,
+        "logs": logs,
+        "return_code": execution_result["return_code"],
         "timestamp": datetime.now().isoformat()
     })
 
     with open("report.json", "w") as f:
         json.dump(data, f, indent=2)
-
-import sys
-
-# ==========================================
-# STARTUP FUNCTIONS
-# ==========================================
-
-def unload_current_model():
-    """Unload all currently loaded models"""
-    print("\nUnloading currently loaded models...")
-
-    try:
-        response = requests.get("http://localhost:1234/api/v1/models")
-        data = response.json()
-
-        models = data.get("data", data.get("models", []))
-        unloaded_any = False
-
-        for model in models:
-            for instance in model.get("loaded_instances", []):
-                instance_id = instance["id"]
-
-                requests.post(
-                    "http://localhost:1234/api/v1/models/unload",
-                    json={"instance_id": instance_id}
-                )
-
-                print(f"Unloaded instance: {instance_id}")
-                unloaded_any = True
-
-        if not unloaded_any:
-            print("No model was loaded.")
-
-    except Exception as e:
-        print("Error while unloading model:", e)
-
-
-def load_model(model):
-    """Load the selected model"""
-    print(f"\nLoading model: {model['display_name']}")
-
-    response = requests.post(
-        "http://localhost:1234/api/v1/models/load",
-        json={
-            "model": model["api_name"]
-        }
-    )
-
-    print("Status Code:", response.status_code)
-    print("Model loaded successfully.\n")
-
+    
+    print("✓ Result saved to report.json")
 
 
 def startup():
@@ -240,14 +243,13 @@ def startup():
 
         print("\n1. Load Model")
         print("2. Unload Model")
-        print("3. Start Test")
+        print("3. Start Test (Generate & Execute Code)")
         print("4. Exit")
 
         choice = int(input("\nEnter your choice: "))
 
         if choice == 1:
             # Select and load a model
-            unload_current_model()
             current_model = choose_model()
             load_model(current_model)
 
@@ -269,12 +271,29 @@ def startup():
             # Generate output
             output = generate_output(selected_prompt["text"])
 
-            # Show output
+            # Show generated code
             print("\nGenerated Output:\n")
             print(output)
 
-            # Save to report.json
-            save_to_report(selected_prompt, current_model, output)
+            # Run the generated code
+            print("\nRunning generated code...\n")
+            execution_result = run_generated_code(output)
+
+            # Show execution results
+            print("Execution Results:")
+            print("Return Code:", execution_result["return_code"])
+            print("\nStandard Output:")
+            print(execution_result["stdout"])
+            print("\nErrors:")
+            print(execution_result["stderr"])
+
+            # Save everything to report.json
+            save_to_report(
+                selected_prompt,
+                current_model,
+                output,
+                execution_result
+            )
 
             print("\nResult added to report.json")
             print("Testing complete.")
@@ -285,5 +304,5 @@ def startup():
 
         else:
             print("\nInvalid choice. Please try again.")
-            
+
 startup()
