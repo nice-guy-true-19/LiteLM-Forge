@@ -2,7 +2,17 @@ import requests
 import json
 import subprocess
 import sys
+import re
+
 from datetime import datetime
+
+# ==========================================
+# CONFIGURATION
+# ==========================================
+
+API_BASE_URL = "http://localhost:1234"
+REPORT_FILE = "report.json"
+TEMP_FILE = "temp_code.py"
 
 # ==========================================
 # LITELM FORGE - MODEL TEST SYSTEM
@@ -103,42 +113,66 @@ def choose_model():
     for i, model in enumerate(MODELS, start=1):
         print(f"{i}. {model['display_name']}")
 
-    choice = int(input("\nSelect model number: "))
-    return MODELS[choice - 1]
-
+    while True:
+        try:
+            choice = int(input("\nSelect model number: "))
+            if 1 <= choice <= len(MODELS):
+                return MODELS[choice - 1]
+            
+            print("Invalid number.")
+        except ValueError:
+            print("Enter a valid number.")
 
 def load_model(model):
     print(f"\nLoading model: {model['display_name']}")
 
-    response = requests.post(
-        "http://localhost:1234/api/v1/models/load",
-        json={
-            "model": model["api_name"]
-        }
-    )
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/api/v1/models/load",
+            json={
+                "model": model["api_name"]
+            },
+            timeout=60
+        )
 
-    print("Status Code:", response.status_code)
-    print("Model loaded successfully.\n")
+        if response.status_code == 200:
+            print("Status Code:", response.status_code)
+            print("Model loaded successfully.\n")
+            return True
 
+        print("Status Code:", response.status_code)
+        print("Failed to load model.")
+        print(response.text)
+        return False
 
-def unload_current_model():
-    """Unload all currently loaded models"""
+    except requests.exceptions.RequestException as e:
+        print(f"Connection error: {e}")
+        return False
+
+def unload_model():
     print("\nUnloading currently loaded models...")
 
     try:
-        response = requests.get("http://localhost:1234/api/v1/models")
+        response = requests.get(
+            f"{API_BASE_URL}/api/v1/models",
+            timeout=30
+        )
+
         data = response.json()
 
         models = data.get("data", data.get("models", []))
+
         unloaded_any = False
 
         for model in models:
             for instance in model.get("loaded_instances", []):
+
                 instance_id = instance["id"]
 
                 requests.post(
-                    "http://localhost:1234/api/v1/models/unload",
-                    json={"instance_id": instance_id}
+                    f"{API_BASE_URL}/api/v1/models/unload",
+                    json={"instance_id": instance_id},
+                    timeout=30
                 )
 
                 print(f"Unloaded instance: {instance_id}")
@@ -147,9 +181,11 @@ def unload_current_model():
         if not unloaded_any:
             print("No model was loaded.")
 
-    except Exception as e:
-        print("Error while unloading model:", e)
+    except requests.exceptions.RequestException as e:
+        print(f"Connection error: {e}")
 
+    except Exception as e:
+        print(f"Unload failed: {e}")
 
 
 def choose_prompt():
@@ -158,71 +194,125 @@ def choose_prompt():
     for i, prompt in enumerate(PROMPTS, start=1):
         print(f"{i}. {prompt['name']}")
 
-    choice = int(input("\nSelect prompt number: "))
-    return PROMPTS[choice - 1]
+    while True:
+        try:
+            choice = int(input("\nSelect prompt number: "))
+
+            if 1 <= choice <= len(PROMPTS):
+                return PROMPTS[choice - 1]
+
+            print("Invalid number.")
+
+        except ValueError:
+            print("Enter a valid number.")
 
 
 def generate_output(prompt_text):
     print("\nGenerating output...\n")
 
-    response = requests.post(
-        "http://localhost:1234/v1/completions",
-        json={
-            "prompt": prompt_text,
-            "max_tokens": 200,
-            "temperature": 0.7
-        }
-    )
+    try:
+        response = requests.post(
+            f"{API_BASE_URL}/v1/completions",
+            json={
+                "prompt": prompt_text,
+                "max_tokens": 200,
+                "temperature": 0.7
+            },
+            timeout=120
+        )
 
-    return response.json()["choices"][0]["text"].strip()
+        response.raise_for_status()
 
+        data = response.json()
+
+        if (
+            "choices" not in data
+            or not data["choices"]
+            or "text" not in data["choices"][0]
+        ):
+            print("Unexpected API response format.")
+            return ""
+
+        return data["choices"][0]["text"].strip()
+
+    except requests.exceptions.RequestException as e:
+        print(f"Generation failed: {e}")
+        return ""
+
+    except ValueError:
+        print("Server returned invalid JSON.")
+        return ""
+
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return ""
+    
 
 def load_existing_report():
     try:
-        with open("report.json", "r") as f:
+
+        with open(
+            REPORT_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
             data = json.load(f)
 
         if not isinstance(data, list):
-            data = []
+            return []
 
-    except:
-        data = []
+        return data
 
-    return data
+    except FileNotFoundError:
+        return []
 
+    except json.JSONDecodeError:
+        print("report.json is corrupted.")
+        return []
 
+    except Exception as e:
+        print(f"Error loading report: {e}")
+        return []
+    
+    
 def run_generated_code(code):
-    """Execute generated code and return results"""
     try:
-        # Extract code from markdown blocks if present
-        import re
-        
-        # Look for ```python ... ``` or ``` ... ``` blocks
-        code_blocks = re.findall(r'```(?:python)?\n(.*?)\n```', code, re.DOTALL)
-        
-        if code_blocks:
-            # Use the first code block found
-            extracted_code = code_blocks[0]
-        else:
-            # If no markdown blocks, use the entire output
-            extracted_code = code
-        
-        # Save generated code to temporary file
-        with open("temp_code.py", "w", encoding="utf-8") as f:
+
+        code_blocks = re.findall(
+            r"```(?:python)?\n(.*?)\n```",
+            code,
+            re.DOTALL
+        )
+
+        extracted_code = code_blocks[0] if code_blocks else code
+
+        with open(
+            TEMP_FILE,
+            "w",
+            encoding="utf-8"
+        ) as f:
             f.write(extracted_code)
-        
-        # Execute the generated code
+
         result = subprocess.run(
-            ["python", "temp_code.py"],
+            [sys.executable, TEMP_FILE],
             capture_output=True,
             text=True,
             timeout=10
         )
+
         return {
             "stdout": result.stdout,
             "stderr": result.stderr,
             "return_code": result.returncode
         }
+
+    except subprocess.TimeoutExpired:
+        return {
+            "stdout": "",
+            "stderr": "Execution timed out.",
+            "return_code": -1
+        }
+
     except Exception as e:
         return {
             "stdout": "",
@@ -230,17 +320,18 @@ def run_generated_code(code):
             "return_code": -1
         }
 
-
 def save_to_report(prompt, model, output, execution_result):
-    """Save test results including execution data to report.json"""
     data = load_existing_report()
 
-    # Combine stdout and stderr into logs
-    logs = f"STDOUT:\n{execution_result['stdout']}\n\nSTDERR:\n{execution_result['stderr']}"
+    logs = (
+        f"STDOUT:\n{execution_result['stdout']}"
+        f"\n\nSTDERR:\n{execution_result['stderr']}"
+    )
 
     data.append({
         "prompt_name": prompt["name"],
         "model_name": model["display_name"],
+        "model_api_name": model["api_name"],
         "prompt_text": prompt["text"],
         "output": output,
         "logs": logs,
@@ -248,14 +339,23 @@ def save_to_report(prompt, model, output, execution_result):
         "timestamp": datetime.now().isoformat()
     })
 
-    with open("report.json", "w") as f:
-        json.dump(data, f, indent=2)
-    
+    with open(
+        REPORT_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+        json.dump(
+            data,
+            f,
+            indent=2,
+            ensure_ascii=False
+        )
+
     print("✓ Result saved to report.json")
 
 
+
 def choose_from_report():
-    """Select a saved test result from report.json to re-execute"""
     data = load_existing_report()
 
     if not data:
@@ -265,40 +365,25 @@ def choose_from_report():
     print("\nSaved Test Results:\n")
 
     for i, result in enumerate(data, start=1):
-        print(f"{i}. {result['prompt_name']} | {result['model_name']} | {result['timestamp']}")
+        print(
+            f"{i}. "
+            f"{result['prompt_name']} | "
+            f"{result['model_name']} | "
+            f"{result['timestamp']}"
+        )
 
-    choice = int(input("\nSelect result number: "))
-    return data[choice - 1]
+    while True:
+        try:
+            choice = int(input("\nSelect result number: "))
 
+            if 1 <= choice <= len(data):
+                return data[choice - 1]
 
-def save_to_report(prompt, model, output, execution_result):
-    """Unload all currently loaded models"""
-    print("\nUnloading currently loaded models...")
+            print("Invalid number.")
 
-    try:
-        response = requests.get("http://localhost:1234/api/v1/models")
-        data = response.json()
+        except ValueError:
+            print("Enter a valid number.")
 
-        models = data.get("data", data.get("models", []))
-        unloaded_any = False
-
-        for model in models:
-            for instance in model.get("loaded_instances", []):
-                instance_id = instance["id"]
-
-                requests.post(
-                    "http://localhost:1234/api/v1/models/unload",
-                    json={"instance_id": instance_id}
-                )
-
-                print(f"Unloaded instance: {instance_id}")
-                unloaded_any = True
-
-        if not unloaded_any:
-            print("No model was loaded.")
-
-    except Exception as e:
-        print("Error while unloading model:", e)
 
 
 def startup():
@@ -320,7 +405,11 @@ def startup():
         print("3. Start Test (Generate & Execute Code)")
         print("4. Exit")
 
-        choice = int(input("\nEnter your choice: "))
+        try:
+            choice = int(input("\nEnter your choice: "))
+        except ValueError:
+            print("\nEnter a valid number.")
+            continue
 
         if choice == 1:
             # Select and load a model
@@ -329,7 +418,7 @@ def startup():
 
         elif choice == 2:
             # Unload the current model
-            unload_current_model()
+            unload_model()
             current_model = None
 
         elif choice == 3:
