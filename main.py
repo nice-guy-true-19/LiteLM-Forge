@@ -5,6 +5,7 @@ import sys
 import re
 
 from datetime import datetime
+from uuid import uuid4
 
 # ==========================================
 # CONFIGURATION
@@ -384,7 +385,185 @@ def choose_from_report():
         except ValueError:
             print("Enter a valid number.")
 
+def create_benchmark_session(model):
 
+    return {
+        "session_id": str(uuid4()),
+        "timestamp": datetime.now().isoformat(),
+        "model_name": model["display_name"],
+        "results": []
+    }
+
+def run_all_prompts(model):
+
+    total = len(PROMPTS)
+
+    benchmark_session = {
+        "session_id": datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        ),
+
+        "timestamp":
+            datetime.now().isoformat(),
+
+        "model_name":
+            model["display_name"],
+
+        "model_api_name":
+            model["api_name"],
+
+        "summary": {},
+
+        "results": []
+    }
+
+    passed = 0
+    failed = 0
+
+    print("\nStarting benchmark...\n")
+
+    for i, prompt in enumerate(
+        PROMPTS,
+        start=1
+    ):
+
+        print(
+            f"\n[{i}/{total}] "
+            f"{prompt['name']}"
+        )
+
+        output = generate_output(
+            prompt["text"]
+        )
+
+        execution_result = (
+            run_generated_code(
+                output
+            )
+        )
+
+        if (
+            execution_result[
+                "return_code"
+            ] == 0
+        ):
+            passed += 1
+        else:
+            failed += 1
+
+        benchmark_session[
+            "results"
+        ].append(
+
+            {
+                "prompt_name":
+                    prompt["name"],
+
+                "prompt_text":
+                    prompt["text"],
+
+                "output":
+                    output,
+
+                "execution": {
+
+                    "return_code":
+                        execution_result[
+                            "return_code"
+                        ],
+
+                    "stdout":
+                        execution_result[
+                            "stdout"
+                        ],
+
+                    "stderr":
+                        execution_result[
+                            "stderr"
+                        ]
+                }
+            }
+        )
+
+    benchmark_session[
+        "summary"
+    ] = {
+
+        "total_tests":
+            total,
+
+        "passed":
+            passed,
+
+        "failed":
+            failed,
+
+        "success_rate":
+            round(
+                (
+                    passed / total
+                ) * 100,
+                2
+            )
+    }
+
+    filename = (
+        "benchmark_"
+        + benchmark_session[
+            "session_id"
+        ]
+        + ".json"
+    )
+
+    with open(
+        filename,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            benchmark_session,
+            f,
+            indent=2,
+            ensure_ascii=False
+        )
+
+    print("\nBenchmark Complete")
+    print(
+        f"Results saved to "
+        f"{filename}"
+    )
+
+def run_custom_prompt(model):
+
+    print("\nEnter custom prompt:\n")
+
+    prompt_text = input("> ")
+
+    output = generate_output(
+        prompt_text
+    )
+
+    print("\nGenerated Output:\n")
+    print(output)
+
+    execution_result = run_generated_code(
+        output
+    )
+
+    custom_prompt = {
+        "name": "custom",
+        "text": prompt_text
+    }
+
+    save_to_report(
+        custom_prompt,
+        model,
+        output,
+        execution_result
+    )
+
+    print("\nCustom prompt saved.")
 
 def startup():
     """Main menu loop"""
@@ -402,8 +581,10 @@ def startup():
 
         print("\n1. Load Model")
         print("2. Unload Model")
-        print("3. Start Test (Generate & Execute Code)")
-        print("4. Exit")
+        print("3. Run Single Prompt")
+        print("4. Run All Prompts")
+        print("5. Run Custom Prompt")
+        print("6. Exit")
 
         try:
             choice = int(input("\nEnter your choice: "))
@@ -462,8 +643,22 @@ def startup():
             print("Testing complete.")
 
         elif choice == 4:
-            print("\nExiting program...")
-            sys.exit()
+            if current_model is None:
+                print("\nNo model loaded.")
+                continue
+
+            run_all_prompts(
+                current_model
+            )
+
+        elif choice == 5:
+            if current_model is None:
+                print("\nNo model loaded.")
+                continue
+
+            run_custom_prompt(
+                current_model
+            )   
 
         else:
             print("\nInvalid choice. Please try again.")
