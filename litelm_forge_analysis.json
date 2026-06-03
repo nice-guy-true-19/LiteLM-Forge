@@ -1,0 +1,225 @@
+{
+  "created": "2026-06-03T11:07:41.407209",
+  "judge_model": "Qwen 2.5 7B Instruct",
+  "analyses": [
+    {
+      "report_index": 1,
+      "prompt_name": "move_zeros",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:08:22.679284",
+      "overall_score": 2,
+      "passed": false,
+      "issues": [
+        "missing function definition",
+        "does not move zeros to end"
+      ],
+      "strengths": [],
+      "verdict": "Fails to solve the task"
+    },
+    {
+      "report_index": 4,
+      "prompt_name": "extract_emails_regex",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:11:04.259577",
+      "overall_score": 2,
+      "passed": false,
+      "issues": [
+        "contains non-code text",
+        "lacks regex implementation"
+      ],
+      "strengths": [],
+      "verdict": "Code does not solve the task as intended."
+    },
+    {
+      "report_index": 5,
+      "prompt_name": "calculate_exact_age",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:11:22.142828",
+      "overall_score": 7,
+      "passed": true,
+      "issues": [
+        "Does not handle leap years correctly for February 29th birthdates",
+        "Could use more robust date parsing"
+      ],
+      "strengths": [
+        "Correctly calculates age considering current year, month, and day"
+      ],
+      "verdict": "Solves the task but with some limitations"
+    },
+    {
+      "report_index": 6,
+      "prompt_name": "filter_adults_to_json",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:11:36.107408",
+      "overall_score": 1,
+      "passed": false,
+      "issues": [
+        "Incomplete code snippet",
+        "Syntax error in age field"
+      ],
+      "strengths": [],
+      "verdict": "Code is incomplete and contains syntax errors"
+    },
+    {
+      "report_index": 7,
+      "prompt_name": "total_log_file_size",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:11:50.502627",
+      "overall_score": 5,
+      "passed": false,
+      "issues": [
+        "incomplete file_path construction",
+        "no handling of FileNotFoundError when accessing files"
+      ],
+      "strengths": [],
+      "verdict": "Code has syntax errors and does not fully implement the task requirements."
+    },
+    {
+      "report_index": 8,
+      "prompt_name": "shopping_cart_class",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:12:22.398562",
+      "overall_score": 8,
+      "passed": true,
+      "issues": [],
+      "strengths": [
+        "Correct implementation of ShoppingCart class with add_item, remove_item and total_cost method (though not implemented here)",
+        "Use of dictionary to store items and their prices"
+      ],
+      "verdict": "Solves the task well with minor improvements possible"
+    },
+    {
+      "report_index": 9,
+      "prompt_name": "requests_retry_fetch",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:12:36.064474",
+      "overall_score": 6,
+      "passed": false,
+      "issues": [
+        "NameError: name 'data' is not defined"
+      ],
+      "strengths": [
+        "Handles retries with a delay"
+      ],
+      "verdict": "Almost correct, but data variable is not always assigned"
+    },
+    {
+      "report_index": 10,
+      "prompt_name": "robust_calculator",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:12:54.099807",
+      "overall_score": 5,
+      "passed": false,
+      "issues": [
+        "Incorrect return statement for ZeroDivisionError",
+        "Syntax error in the code"
+      ],
+      "strengths": [
+        "Uses try/except block"
+      ],
+      "verdict": "The code has issues with incorrect handling of exceptions and a syntax error."
+    },
+    {
+      "report_index": 11,
+      "prompt_name": "reverse_string_no_slice",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:13:08.734528",
+      "overall_score": 9,
+      "passed": true,
+      "issues": [],
+      "strengths": [
+        "Correctly reverses the string without using slice notation or reversed() function",
+        "Readable and easy to understand"
+      ],
+      "verdict": "Effective solution with minor room for improvement in terms of conciseness"
+    },
+    {
+      "report_index": 13,
+      "prompt_name": "sort_descending_no_sorted",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:15:20.659542",
+      "overall_score": 2,
+      "passed": false,
+      "issues": [
+        "uses_sort_method",
+        "no_custom_implementation"
+      ],
+      "strengths": [],
+      "verdict": "Does not meet the task requirements as it uses built-in sort method."
+    },
+    {
+      "report_index": 15,
+      "prompt_name": "custom",
+      "model_name": "Qwen 2.5 Coder 1.5B",
+      "timestamp": "2026-06-03T11:16:08.656141",
+      "overall_score": 5,
+      "passed": false,
+      "issues": [
+        "Missing multiplication operation",
+        "Lack of return statement",
+        "No input validation"
+      ],
+      "strengths": [
+        "Correct order of operations"
+      ],
+      "verdict": "The code has logical errors and is incomplete."
+    }
+  ],
+  "summary": {
+    "total_analyzed": 11,
+    "avg_score": 4.73,
+    "pass_rate": 27.27,
+    "by_prompt": {
+      "move_zeros": {
+        "count": 1,
+        "avg_score": 2.0
+      },
+      "extract_emails_regex": {
+        "count": 1,
+        "avg_score": 2.0
+      },
+      "calculate_exact_age": {
+        "count": 1,
+        "avg_score": 7.0
+      },
+      "filter_adults_to_json": {
+        "count": 1,
+        "avg_score": 1.0
+      },
+      "total_log_file_size": {
+        "count": 1,
+        "avg_score": 5.0
+      },
+      "shopping_cart_class": {
+        "count": 1,
+        "avg_score": 8.0
+      },
+      "requests_retry_fetch": {
+        "count": 1,
+        "avg_score": 6.0
+      },
+      "robust_calculator": {
+        "count": 1,
+        "avg_score": 5.0
+      },
+      "reverse_string_no_slice": {
+        "count": 1,
+        "avg_score": 9.0
+      },
+      "sort_descending_no_sorted": {
+        "count": 1,
+        "avg_score": 2.0
+      },
+      "custom": {
+        "count": 1,
+        "avg_score": 5.0
+      }
+    },
+    "by_model": {
+      "Qwen 2.5 Coder 1.5B": {
+        "count": 11,
+        "avg_score": 4.7272727272727275
+      }
+    }
+  }
+}

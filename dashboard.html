@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ LiteLM Forge - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card .label {
+            color: #999;
+            font-size: 0.95em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        .table-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .table-container h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge-pass {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-fail {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .score.high {
+            color: #28a745;
+        }
+
+        .score.medium {
+            color: #ffc107;
+        }
+
+        .score.low {
+            color: #dc3545;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .chart-container h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .bar-chart {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .bar-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .bar-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .bar-background {
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .session-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .session-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .session-time {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .refresh-time {
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚡ LiteLM Forge Dashboard</h1>
+            <p>AI Code Generation Testing & Analysis Platform</p>
+            <div class="controls">
+                <button class="btn-primary" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn-secondary" onclick="downloadReport()">📥 Download Report</button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid" id="summaryCards">
+            <div class="card">
+                <h3>📊 Total Tests</h3>
+                <div class="value" id="totalTests">0</div>
+                <div class="label">Across all sessions</div>
+            </div>
+            <div class="card">
+                <h3>✅ Pass Rate</h3>
+                <div class="value" id="passRate">0%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="passRateBar" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>📈 Avg Score</h3>
+                <div class="value" id="avgScore">0/10</div>
+                <div class="label">Code quality score</div>
+            </div>
+            <div class="card">
+                <h3>🤖 Active Sessions</h3>
+                <div class="value" id="sessionCount">0</div>
+                <div class="label">Testing sessions</div>
+            </div>
+        </div>
+
+        <!-- Tabs for different views -->
+        <div class="table-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('results')">📋 Latest Results</button>
+                <button class="tab" onclick="switchTab('analysis')">🔬 Analysis Scores</button>
+                <button class="tab" onclick="switchTab('sessions')">📁 Sessions</button>
+            </div>
+
+            <!-- Results Tab -->
+            <div id="results" class="tab-content active">
+                <h3>Latest Test Results</h3>
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Prompt</th>
+                            <th>Model</th>
+                            <th>Status</th>
+                            <th>Return Code</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <tr><td colspan="5" class="no-data">No data yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Analysis Tab -->
+            <div id="analysis" class="tab-content">
+                <h3>Code Quality Analysis</h3>
+                <table id="analysisTable">
+                    <thead>
+                        <tr>
+                            <th>Prompt</th>
+                            <th>Model</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analysisBody">
+                        <tr><td colspan="5" class="no-data">No analyses yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sessions Tab -->
+            <div id="sessions" class="tab-content">
+                <h3>Testing Sessions</h3>
+                <div id="sessionsList"></div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-container" id="chartsContainer" style="display: none;">
+            <h3>📊 Performance by Prompt</h3>
+            <div class="bar-chart" id="promptChart"></div>
+        </div>
+
+        <!-- Refresh time -->
+        <div class="refresh-time" id="refreshTime"></div>
+    </div>
+
+    <script>
+        let reportData = null;
+        let analysisData = null;
+
+        async function loadData() {
+            try {
+                // Try to load from localStorage first (for demo)
+                const stored = localStorage.getItem('litelm_forge_report');
+                if (stored) {
+                    reportData = JSON.parse(stored);
+                } else {
+                    // In real scenario, this would be from the server
+                    reportData = { sessions: [] };
+                }
+
+                const storedAnalysis = localStorage.getItem('litelm_forge_analysis');
+                if (storedAnalysis) {
+                    analysisData = JSON.parse(storedAnalysis);
+                } else {
+                    analysisData = { analyses: [], summary: {} };
+                }
+
+                updateDashboard();
+                document.getElementById('refreshTime').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function updateDashboard() {
+            if (!reportData || !reportData.sessions) return;
+
+            // Calculate stats
+            let totalTests = 0;
+            let passedTests = 0;
+            const allResults = [];
+
+            reportData.sessions.forEach(session => {
+                session.results.forEach(result => {
+                    allResults.push(result);
+                    totalTests++;
+                    if (result.passed) passedTests++;
+                });
+            });
+
+            const passRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+
+            // Calculate average score from analysis
+            let avgScore = 0;
+            if (analysisData.analyses && analysisData.analyses.length > 0) {
+                const scores = analysisData.analyses
+                    .map(a => a.overall_score || 0)
+                    .filter(s => s > 0);
+                avgScore = scores.length > 0 
+                    ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)
+                    : 0;
+            }
+
+            // Update summary cards
+            document.getElementById('totalTests').textContent = totalTests;
+            document.getElementById('passRate').textContent = passRate + '%';
+            document.getElementById('passRateBar').style.width = passRate + '%';
+            document.getElementById('avgScore').textContent = avgScore + '/10';
+            document.getElementById('sessionCount').textContent = reportData.sessions.length;
+
+            // Update results table
+            updateResultsTable(allResults);
+
+            // Update analysis table
+            if (analysisData.analyses) {
+                updateAnalysisTable(analysisData.analyses);
+            }
+
+            // Update sessions list
+            updateSessionsList();
+
+            // Update charts if there's analysis data
+            if (analysisData.summary && analysisData.summary.by_prompt) {
+                updateCharts();
+                document.getElementById('chartsContainer').style.display = 'block';
+            }
+        }
+
+        function updateResultsTable(results) {
+            const tbody = document.getElementById('resultsBody');
+            
+            if (results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">No test results yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = results.slice(-20).reverse().map(result => {
+                const status = result.passed 
+                    ? '<span class="badge badge-pass">✅ Passed</span>'
+                    : '<span class="badge badge-fail">❌ Failed</span>';
+                
+                const time = result.timestamp 
+                    ? new Date(result.timestamp).toLocaleTimeString()
+                    : 'N/A';
+
+                return `
+                    <tr>
+                        <td><strong>${result.prompt_name}</strong></td>
+                        <td>${result.model_name}</td>
+                        <td>${status}</td>
+                        <td><code>${result.return_code}</code></td>
+                        <td>${time}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateAnalysisTable(analyses) {
+            const tbody = document.getElementById('analysisBody');
+            
+            if (analyses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">No analyses yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = analyses.slice(-20).reverse().map(analysis => {
+                const score = analysis.overall_score || 0;
+                const scoreClass = score >= 7 ? 'high' : score >= 4 ? 'medium' : 'low';
+                const status = analysis.passed 
+                    ? '<span class="badge badge-pass">✅</span>'
+                    : '<span class="badge badge-warning">⚠️</span>';
+
+                return `
+                    <tr>
+                        <td><strong>${analysis.prompt_name}</strong></td>
+                        <td>${analysis.model_name}</td>
+                        <td><span class="score ${scoreClass}">${score}/10</span></td>
+                        <td>${status}</td>
+                        <td>${analysis.verdict || 'N/A'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateSessionsList() {
+            const list = document.getElementById('sessionsList');
+            
+            if (!reportData.sessions || reportData.sessions.length === 0) {
+                list.innerHTML = '<div class="no-data">No sessions yet</div>';
+                return;
+            }
+
+            list.innerHTML = reportData.sessions.map(session => {
+                const summary = session.summary || {};
+                const passRate = summary.success_rate || 0;
+
+                return `
+                    <div class="session-item">
+                        <strong>🤖 ${session.model_name}</strong>
+                        <div class="session-time">${new Date(session.created).toLocaleString()}</div>
+                        <div style="margin-top: 10px; font-size: 0.9em;">
+                            Tests: ${summary.total || 0} | 
+                            Passed: ${summary.passed || 0} | 
+                            Success: ${passRate}%
+                        </div>
+                    </div>
+                `;
+            }).reverse().join('');
+        }
+
+        function updateCharts() {
+            const chart = document.getElementById('promptChart');
+            const summary = analysisData.summary;
+
+            if (!summary.by_prompt) return;
+
+            chart.innerHTML = Object.entries(summary.by_prompt).map(([prompt, stats]) => {
+                const width = (stats.avg_score / 10) * 100;
+                return `
+                    <div class="bar-item">
+                        <div class="bar-label">${prompt}</div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: ${width}%">
+                                ${stats.avg_score.toFixed(1)}/10
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function downloadReport() {
+            const data = {
+                report: reportData,
+                analysis: analysisData,
+                generated: new Date().toISOString()
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `litelm-report-${new Date().getTime()}.json`;
+            a.click();
+        }
+
+        // Load data on page load and refresh every 5 seconds
+        loadData();
+        setInterval(loadData, 5000);
+    </script>
+</body>
+</html>
