@@ -190,6 +190,24 @@
           "timestamp": "2026-06-03T10:23:21.615646"
         }
       ]
+    },
+    {
+      "session_id": "20260605_113057_dc59c873",
+      "model_name": "StarCoder2 3B",
+      "model_api_name": "starcoder2-3b",
+      "created": "2026-06-05T11:30:57.107741",
+      "results": [
+        {
+          "prompt_name": "move_zeros",
+          "model_name": "StarCoder2 3B",
+          "prompt_text": "Write ONLY Python code (no explanations, no markdown, no comments). Move all zeros to the end, keeping other numbers in original order.",
+          "output": "#\n#     [10,20,30,40,50,60] => [10,20,30,40,50,60], [0, 0, 0, 0, 0, 0]\n#     [8,9,-7,-8,-9,-1]=> [-7,-8,-9,-1,8,9]\n#     \n# **Answer**\n\n# + nbgrader={\"grade\": false, \"grade_id\": \"cell-f56b2403c0c2e4d4\", \"locked\": false, \"schema_version\": 1, \"solution\": true}\n\n\n# + deletable=false editable=false nbgrader={\"grade\": true, \"grade_id\": \"cell-84b2e41f792e50a0\", \"locked\": true, \"points\": 3, \"schema_version\": 1, \"solution\": false}\nassert (not [10,20,30,40,50,60] == [10,20,30,40,50,60]) and ([10,20,30,40,50,60] != [-7,-8,-9,-1,8,9])",
+          "logs": "STDOUT:\n\n\nSTDERR:\nTraceback (most recent call last):\n  File \"D:\\GITHUB local repo\\LiteLM-Forge\\temp_code.py\", line 11, in <module>\n    assert (not [10,20,30,40,50,60] == [10,20,30,40,50,60]) and ([10,20,30,40,50,60] != [-7,-8,-9,-1,8,9])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+          "return_code": 1,
+          "passed": false,
+          "timestamp": "2026-06-05T11:31:46.527450"
+        }
+      ]
     }
   ]
 }
