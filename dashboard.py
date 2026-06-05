@@ -13,17 +13,15 @@ ANALYSIS_FILE = "litelm_forge_analysis.json"
 PORT = 8000
 
 # ==========================================
-# DASHBOARD HTML
+# DASHBOARD HTML (Dark Neon Theme)
 # ==========================================
 
 DASHBOARD_HTML = """<!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiteLM Forge - Professional Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <title>⚡ LiteLM Forge - Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -32,498 +30,797 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #0f0f1e;
-            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1f 0%, #1a1a2e 100%);
             min-height: 100vh;
-            padding-bottom: 50px;
+            padding: 20px;
+            color: #e0e0e0;
         }
 
-        /* Navigation */
-        .navbar {
-            background: #1a1a2e;
-            border-bottom: 1px solid #2a2a4e;
-            padding: 0 40px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
-        .navbar-content {
-            max-width: 1600px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 70px;
-        }
-
-        .logo {
-            font-size: 1.4em;
-            font-weight: 700;
-            color: #00d4ff;
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #b0b0d0;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .nav-links a:hover {
-            color: #00d4ff;
-            background: rgba(0, 212, 255, 0.1);
-        }
-
-        .nav-links a.active {
-            color: #00d4ff;
-            background: rgba(0, 212, 255, 0.15);
-            border-bottom: 2px solid #00d4ff;
-        }
-
-        /* Page container */
         .container {
-            max-width: 1600px;
-            margin: 40px auto;
-            padding: 0 40px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Page transitions */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.2), 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 0;
+            text-align: center;
+            border: 2px solid #00ff41;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00ff41, #00d4ff, #ffb800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        .header p {
+            color: #b0b0d0;
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            background: #16213e;
+            border-bottom: 3px solid #00ff41;
+            padding: 0 30px;
+            margin: 0;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+        }
+
+        .nav-tab {
+            padding: 16px 24px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            color: #ffb800;
+            background: rgba(255, 184, 0, 0.1);
+            box-shadow: inset 0 -2px 10px rgba(255, 184, 0, 0.2);
+        }
+
+        .nav-tab.active {
+            color: #00ff41;
+            border-bottom-color: #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4), inset 0 -2px 10px rgba(0, 255, 65, 0.2);
+        }
+
+        .content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.2), 0 10px 40px rgba(0,0,0,0.3);
+            border: 2px solid #00ff41;
+            border-top: none;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
         .page {
             display: none;
-            animation: fadeIn 0.4s ease-in-out;
-            opacity: 0;
+            animation: fadeIn 0.3s;
         }
 
         .page.active {
             display: block;
-            animation: fadeIn 0.5s ease-in-out;
-            opacity: 1;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        /* Grid layouts */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff41, #00d4ff);
+            color: #0f0f1f;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            border: 2px solid #00ff41;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.8), 0 5px 15px rgba(0, 255, 65, 0.3);
+            color: #000;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 184, 0, 0.1);
+            color: #ffb800;
+            border: 2px solid #ffb800;
+            box-shadow: 0 0 15px rgba(255, 184, 0, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 184, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 184, 0, 0.6);
+        }
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .grid-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        @media (max-width: 1200px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Cards */
         .card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #2a2a4e;
-            padding: 28px;
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.05), rgba(0, 212, 255, 0.05));
+            padding: 25px;
             border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
         }
 
         .card:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.15);
-            transform: translateY(-2px);
+            border-color: #ffb800;
+            box-shadow: 0 0 30px rgba(255, 184, 0, 0.4);
+            background: linear-gradient(135deg, rgba(255, 184, 0, 0.05), rgba(255, 184, 0, 0.05));
         }
 
         .card h3 {
-            color: #b0b0d0;
-            font-size: 0.85em;
+            color: #00ff41;
+            margin-bottom: 15px;
+            font-size: 0.9em;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
         }
 
         .card .value {
-            font-size: 2.8em;
-            font-weight: 700;
-            color: #00d4ff;
-            margin-bottom: 12px;
+            font-size: 2.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ff41, #ffb800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
         }
 
         .card .label {
-            color: #7a7a9e;
+            color: #888;
             font-size: 0.95em;
         }
 
-        /* Progress bar */
         .progress-bar {
             width: 100%;
-            height: 6px;
-            background: #2a2a4e;
+            height: 8px;
+            background: rgba(0, 255, 65, 0.1);
             border-radius: 10px;
             overflow: hidden;
-            margin-top: 16px;
+            margin-top: 15px;
+            border: 1px solid #00ff41;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #0099cc);
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 10px;
+            background: linear-gradient(90deg, #00ff41, #ffb800);
+            transition: width 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
         }
 
-        /* Section headers */
-        h2 {
-            color: #e0e0e0;
-            font-size: 1.8em;
-            margin-bottom: 32px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        h3 {
-            color: #e0e0e0;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        /* Charts container */
-        .chart-container {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #2a2a4e;
-            padding: 28px;
+        .info-section {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.05), rgba(0, 212, 255, 0.05));
             border-radius: 12px;
-            margin-bottom: 32px;
-            position: relative;
-            height: 400px;
+            border: 2px solid #00d4ff;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
         }
 
-        .chart-wrapper {
-            position: relative;
-            height: 100%;
+        .info-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
         }
 
-        /* Tables */
+        .info-content {
+            font-size: 14px;
+            color: #b0b0d0;
+            line-height: 1.6;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .model-card {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.05), rgba(255, 184, 0, 0.05));
+            border: 2px solid #ffb800;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255, 184, 0, 0.2);
+        }
+
+        .model-card:hover {
+            border-color: #00ff41;
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.1), rgba(0, 212, 255, 0.1));
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.4), 0 0 15px rgba(255, 184, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .model-card.selected {
+            border: 2px solid #00ff41;
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 212, 255, 0.15));
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.5);
+        }
+
+        .model-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .model-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .model-meta div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .model-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 65, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #00ff41;
+        }
+
+        .stat-num {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .keywords {
+            margin-top: 12px;
+        }
+
+        .keyword-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ffb800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .keyword-tag {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+        }
+
+        .keyword-tag.good {
+            background: rgba(0, 255, 65, 0.15);
+            color: #00ff41;
+            border-color: #00ff41;
+        }
+
+        .keyword-tag.bad {
+            background: rgba(255, 50, 100, 0.15);
+            color: #ff3264;
+            border-color: #ff3264;
+        }
+
+        .table-container {
+            margin-bottom: 30px;
+        }
+
+        .table-container h3 {
+            color: #00ff41;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 32px;
         }
 
         th {
-            background: rgba(0, 212, 255, 0.1);
-            border-bottom: 2px solid #00d4ff;
-            padding: 16px;
+            background: rgba(0, 255, 65, 0.1);
+            padding: 15px;
             text-align: left;
-            color: #00d4ff;
-            font-weight: 600;
-            font-size: 0.95em;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+            font-weight: bold;
+            color: #00ff41;
+            border-bottom: 2px solid #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
         }
 
         td {
-            padding: 16px;
-            border-bottom: 1px solid #2a2a4e;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
             color: #b0b0d0;
         }
 
         tr:hover {
-            background: rgba(0, 212, 255, 0.05);
+            background: rgba(0, 255, 65, 0.05);
         }
 
-        /* Badges */
         .badge {
             display: inline-block;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.85em;
-            font-weight: 600;
+            font-weight: bold;
         }
 
         .badge-pass {
-            background: rgba(0, 200, 100, 0.2);
-            color: #00c864;
+            background: rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+            border: 1px solid #00ff41;
         }
 
         .badge-fail {
-            background: rgba(255, 100, 100, 0.2);
-            color: #ff6464;
+            background: rgba(255, 50, 100, 0.2);
+            color: #ff3264;
+            border: 1px solid #ff3264;
         }
 
         .badge-warning {
-            background: rgba(255, 165, 0, 0.2);
-            color: #ffa500;
+            background: rgba(255, 184, 0, 0.2);
+            color: #ffb800;
+            border: 1px solid #ffb800;
         }
 
-        /* Scores */
         .score {
-            font-weight: 700;
+            font-weight: bold;
             font-size: 1.1em;
         }
 
-        .score-high {
-            color: #00c864;
+        .score.high {
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
         }
 
-        .score-medium {
-            color: #ffa500;
+        .score.medium {
+            color: #ffb800;
+            text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
         }
 
-        .score-low {
-            color: #ff6464;
+        .score.low {
+            color: #ff3264;
+            text-shadow: 0 0 10px rgba(255, 50, 100, 0.5);
         }
 
-        /* Report view */
-        .report-item {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #2a2a4e;
-            padding: 32px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .chart-container {
+            margin-bottom: 30px;
         }
 
-        .report-item:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+        .chart-container h3 {
+            color: #00ff41;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
         }
 
-        .report-item h4 {
-            color: #00d4ff;
-            margin-bottom: 16px;
-            font-size: 1.2em;
-        }
-
-        .report-item .meta {
+        .bar-chart {
             display: flex;
-            gap: 20px;
-            margin-bottom: 16px;
+            gap: 30px;
             flex-wrap: wrap;
         }
 
-        .meta-item {
+        .bar-item {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .bar-label {
+            font-size: 0.9em;
+            color: #ffb800;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .bar-background {
+            height: 30px;
+            background: rgba(0, 255, 65, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #00ff41;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #ffb800);
             display: flex;
-            flex-direction: column;
-        }
-
-        .meta-label {
-            color: #7a7a9e;
-            font-size: 0.85em;
-            margin-bottom: 4px;
-        }
-
-        .meta-value {
-            color: #e0e0e0;
-            font-weight: 600;
-        }
-
-        /* Pie chart container */
-        .pie-container {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid #2a2a4e;
-            padding: 28px;
-            border-radius: 12px;
-            margin-bottom: 32px;
-            position: relative;
-            min-height: 300px;
-        }
-
-        .pie-label {
-            color: #00d4ff;
-            font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 16px;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
         }
 
         .no-data {
             text-align: center;
-            padding: 60px 20px;
-            color: #7a7a9e;
-        }
-
-        /* Loading spinner */
-        .loading {
-            text-align: center;
             padding: 40px;
-            color: #00d4ff;
+            color: #666;
         }
 
-        .spinner {
-            border: 3px solid #2a2a4e;
-            border-top: 3px solid #00d4ff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px;
+        .session-item {
+            padding: 15px;
+            background: rgba(0, 255, 65, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 255, 65, 0.3);
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .session-item:hover {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: #ffb800;
+            transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.3);
         }
 
-        /* Code blocks */
+        .session-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .refresh-time {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .analysis-section {
+            margin-bottom: 20px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .analysis-card {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.05), rgba(0, 212, 255, 0.05));
+            border-radius: 12px;
+            border: 2px solid #00ff41;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+
+        .analysis-metric {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .analysis-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00ff41;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        .select-label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #00ff41;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #00ff41;
+            font-size: 14px;
+            margin-bottom: 20px;
+            background: rgba(0, 255, 65, 0.1);
+            color: #00ff41;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+
+        select:hover {
+            border-color: #ffb800;
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.4);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #00ff41;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.5);
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #00ff41;
+        }
+
         code {
-            background: rgba(0, 212, 255, 0.05);
+            background: rgba(0, 255, 65, 0.1);
+            color: #00ff41;
             padding: 2px 6px;
             border-radius: 4px;
-            color: #00d4ff;
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-
-        /* Grid layouts for pie charts */
-        .pie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 32px;
-            margin-bottom: 32px;
-        }
-
-        /* Verdict text */
-        .verdict {
-            color: #b0b0d0;
-            font-style: italic;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #2a2a4e;
-        }
-
-        /* Update time */
-        .update-time {
-            text-align: center;
-            color: #7a7a9e;
-            font-size: 0.9em;
-            margin-top: 32px;
-            padding-top: 20px;
-            border-top: 1px solid #2a2a4e;
+            border: 1px solid #00ff41;
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="navbar-content">
-            <div class="logo">⚡ LiteLM Forge</div>
-            <ul class="nav-links">
-                <li><a class="nav-item active" onclick="switchPage('dashboard')">Dashboard</a></li>
-                <li><a class="nav-item" onclick="switchPage('report')">Full Report</a></li>
-                <li><a class="nav-item" onclick="switchPage('analysis')">Analysis</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Pages -->
     <div class="container">
-        <!-- Dashboard Page -->
-        <div id="dashboard" class="page active">
-            <h2>Dashboard Overview</h2>
-            
-            <!-- Summary Cards -->
-            <div class="grid">
-                <div class="card">
-                    <h3>📊 Total Tests</h3>
-                    <div class="value" id="totalTests">0</div>
-                    <div class="label">Across all sessions</div>
-                </div>
-                <div class="card">
-                    <h3>✅ Pass Rate</h3>
-                    <div class="value" id="passRate">0%</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="passRateBar" style="width: 0%"></div>
+        <!-- Header -->
+        <div class="header">
+            <h1>⚡ LiteLM Forge Dashboard</h1>
+            <p>AI Code Generation Testing & Benchmarking Platform</p>
+            <div class="controls">
+                <button class="btn-primary" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn-secondary" onclick="downloadReport()">📥 Download Report</button>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchPage('page1')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="switchPage('page2')">🤖 Models</button>
+            <button class="nav-tab" onclick="switchPage('page3')">📋 Report</button>
+            <button class="nav-tab" onclick="switchPage('page4')">🔬 Analysis</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- PAGE 1: DASHBOARD -->
+            <div id="page1" class="page active">
+                <!-- Summary Cards -->
+                <div class="grid">
+                    <div class="card">
+                        <h3>📊 Total Tests</h3>
+                        <div class="value" id="totalTests">0</div>
+                        <div class="label">Across all sessions</div>
+                    </div>
+                    <div class="card">
+                        <h3>✅ Pass Rate</h3>
+                        <div class="value" id="passRate">0%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="passRateBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>📈 Avg Score</h3>
+                        <div class="value" id="avgScore">0/10</div>
+                        <div class="label">Code quality score</div>
+                    </div>
+                    <div class="card">
+                        <h3>🤖 Sessions</h3>
+                        <div class="value" id="sessionCount">0</div>
+                        <div class="label">Testing runs</div>
                     </div>
                 </div>
-                <div class="card">
-                    <h3>📈 Avg Quality Score</h3>
-                    <div class="value" id="avgScore">0<span style="font-size: 0.6em">/10</span></div>
-                    <div class="label">Code quality</div>
-                </div>
-                <div class="card">
-                    <h3>🤖 Sessions</h3>
-                    <div class="value" id="sessionCount">0</div>
-                    <div class="label">Testing runs</div>
-                </div>
-            </div>
 
-            <!-- Model Comparison Chart -->
-            <div class="chart-container">
-                <h3>Model Performance Comparison</h3>
-                <div class="chart-wrapper">
-                    <canvas id="modelComparisonChart"></canvas>
+                <div class="info-section">
+                    <div class="info-title">📌 About LiteLM Forge</div>
+                    <div class="info-content">
+                        A complete testing and benchmarking framework for evaluating code generated by local LLMs. Tests models on 14+ coding tasks, executes generated code, and analyzes quality using AI judge models.
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="chart-container" id="chartsContainer" style="display: none;">
+                    <h3>📊 Performance by Prompt</h3>
+                    <div class="bar-chart" id="promptChart"></div>
                 </div>
             </div>
 
-            <!-- Pie Charts by Model -->
-            <h3 style="margin-top: 40px;">Analysis Distribution by Model</h3>
-            <div class="pie-grid" id="pieChartsContainer"></div>
+            <!-- PAGE 2: MODELS -->
+            <div id="page2" class="page">
+                <h2 style="color: #00ff41; margin-bottom: 20px; font-size: 1.5em; text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);">All Tested Models</h2>
+                <div class="models-grid" id="modelsGrid">
+                    <!-- Models will be generated from data -->
+                </div>
+            </div>
 
-            <div class="update-time" id="updateTime"></div>
+            <!-- PAGE 3: REPORT -->
+            <div id="page3" class="page">
+                <div class="table-container">
+                    <h3>Latest Test Results</h3>
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Prompt</th>
+                                <th>Model</th>
+                                <th>Status</th>
+                                <th>Return Code</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                            <tr><td colspan="5" class="no-data">No data yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PAGE 4: ANALYSIS -->
+            <div id="page4" class="page">
+                <div class="analysis-section">
+                    <h2 style="color: #00ff41; margin-bottom: 20px; font-size: 1.5em; text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);">Code Quality Analysis</h2>
+                    
+                    <label class="select-label">Select Model to Analyze</label>
+                    <select onchange="updateAnalysis(this.value)">
+                        <option value="">Choose a model...</option>
+                        <option value="all">All Models</option>
+                    </select>
+
+                    <div id="analysisContent" style="display: none;">
+                        <div class="analysis-grid">
+                            <div class="analysis-card">
+                                <div class="analysis-metric">Total Analyzed</div>
+                                <div class="analysis-value" id="totalVal">0</div>
+                            </div>
+                            <div class="analysis-card">
+                                <div class="analysis-metric">Average Score</div>
+                                <div class="analysis-value" id="avgScoreVal">0/10</div>
+                            </div>
+                            <div class="analysis-card">
+                                <div class="analysis-metric">Pass Rate</div>
+                                <div class="analysis-value" id="passRateVal">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <h3>Performance by Prompt</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Prompt</th>
+                                        <th>Score</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="promptDetails">
+                                    <tr><td colspan="3" class="no-data">No data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="emptyState" class="info-section" style="text-align: center; color: #888;">
+                        Select a model to view analysis metrics
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3>Code Quality Analysis Details</h3>
+                    <table id="analysisTable">
+                        <thead>
+                            <tr>
+                                <th>Prompt</th>
+                                <th>Model</th>
+                                <th>Score</th>
+                                <th>Status</th>
+                                <th>Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analysisBody">
+                            <tr><td colspan="5" class="no-data">No analyses yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <!-- Full Report Page -->
-        <div id="report" class="page">
-            <h2>Complete Test Report</h2>
-            <div id="reportContainer" class="no-data">Loading report...</div>
-            <div class="update-time" id="updateTimeReport"></div>
-        </div>
-
-        <!-- Analysis Page -->
-        <div id="analysis" class="page">
-            <h2>Code Quality Analysis</h2>
-            <div id="analysisContainer" class="no-data">Loading analysis...</div>
-            <div class="update-time" id="updateTimeAnalysis"></div>
-        </div>
+        <!-- Refresh time -->
+        <div class="refresh-time" id="refreshTime"></div>
     </div>
 
     <script>
         let reportData = null;
         let analysisData = null;
-        let modelComparisonChart = null;
-        let pieCharts = {};
 
         async function loadData() {
             try {
+                // Fetch from API endpoints
                 const reportRes = await fetch('/api/report');
                 const analysisRes = await fetch('/api/analysis');
                 
-                reportData = await reportRes.json();
-                analysisData = await analysisRes.json();
+                if (reportRes.ok) {
+                    reportData = await reportRes.json();
+                } else {
+                    reportData = { sessions: [] };
+                }
+                
+                if (analysisRes.ok) {
+                    analysisData = await analysisRes.json();
+                } else {
+                    analysisData = { analyses: [], summary: {} };
+                }
 
                 updateDashboard();
-                updateReportPage();
-                updateAnalysisPage();
-
-                const now = new Date();
-                document.getElementById('updateTime').textContent = `Last updated: ${now.toLocaleTimeString()}`;
-                document.getElementById('updateTimeReport').textContent = `Last updated: ${now.toLocaleTimeString()}`;
-                document.getElementById('updateTimeAnalysis').textContent = `Last updated: ${now.toLocaleTimeString()}`;
+                document.getElementById('refreshTime').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
             } catch (error) {
                 console.error('Error loading data:', error);
+                document.getElementById('refreshTime').textContent = `Error loading data: ${error.message}`;
             }
         }
 
@@ -533,27 +830,27 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             let totalTests = 0;
             let passedTests = 0;
             const allResults = [];
-            const modelStats = {};
+            const modelMap = {};
 
             reportData.sessions.forEach(session => {
                 const modelName = session.model_name;
-                if (!modelStats[modelName]) {
-                    modelStats[modelName] = { total: 0, passed: 0, scores: {} };
+                if (!modelMap[modelName]) {
+                    modelMap[modelName] = {
+                        name: modelName,
+                        total: 0,
+                        passed: 0,
+                        source: 'Local LM',
+                        results: []
+                    };
                 }
 
                 session.results.forEach(result => {
                     allResults.push(result);
                     totalTests++;
                     if (result.passed) passedTests++;
-                    
-                    modelStats[modelName].total++;
-                    if (result.passed) modelStats[modelName].passed++;
-                    
-                    const prompt = result.prompt_name || 'unknown';
-                    if (!modelStats[modelName].scores[prompt]) {
-                        modelStats[modelName].scores[prompt] = [];
-                    }
-                    modelStats[modelName].scores[prompt].push(result);
+                    modelMap[modelName].total++;
+                    if (result.passed) modelMap[modelName].passed++;
+                    modelMap[modelName].results.push(result);
                 });
             });
 
@@ -572,261 +869,240 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             document.getElementById('totalTests').textContent = totalTests;
             document.getElementById('passRate').textContent = passRate + '%';
             document.getElementById('passRateBar').style.width = passRate + '%';
-            document.getElementById('avgScore').textContent = avgScore;
+            document.getElementById('avgScore').textContent = avgScore + '/10';
             document.getElementById('sessionCount').textContent = reportData.sessions.length;
 
-            updateModelComparisonChart(modelStats);
-            updatePieCharts(modelStats);
+            updateResultsTable(allResults);
+            updateModelsPage(modelMap);
+            
+            if (analysisData.analyses) {
+                updateAnalysisTable(analysisData.analyses);
+                populateModelSelect(modelMap);
+            }
+
+            if (analysisData.summary && analysisData.summary.by_prompt) {
+                updateCharts();
+                document.getElementById('chartsContainer').style.display = 'block';
+            }
         }
 
-        function updateModelComparisonChart(modelStats) {
-            const models = Object.keys(modelStats);
-            const allPrompts = new Set();
-            
-            Object.values(modelStats).forEach(stats => {
-                Object.keys(stats.scores).forEach(p => allPrompts.add(p));
-            });
-            
-            const prompts = Array.from(allPrompts);
-            const datasets = models.map((model, idx) => {
-                const colors = ['#00d4ff', '#00c864', '#ffa500'];
-                return {
-                    label: model,
-                    data: prompts.map(p => 
-                        modelStats[model].scores[p] 
-                            ? modelStats[model].scores[p].length 
-                            : 0
-                    ),
-                    backgroundColor: colors[idx % colors.length],
-                    borderColor: colors[idx % colors.length],
-                    borderWidth: 2,
-                    borderRadius: 8,
-                };
-            });
+        function updateModelsPage(modelMap) {
+            const grid = document.getElementById('modelsGrid');
+            const models = Object.values(modelMap);
 
-            const ctx = document.getElementById('modelComparisonChart');
-            if (modelComparisonChart) modelComparisonChart.destroy();
+            if (models.length === 0) {
+                grid.innerHTML = '<div class="no-data">No models tested yet</div>';
+                return;
+            }
 
-            modelComparisonChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: prompts,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#b0b0d0', font: { size: 12 } }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: { color: '#7a7a9e' },
-                            grid: { color: '#2a2a4e' },
-                            beginAtZero: true
-                        },
-                        x: {
-                            ticks: { color: '#7a7a9e' },
-                            grid: { color: '#2a2a4e' }
-                        }
-                    }
+            grid.innerHTML = models.map((model, idx) => `
+                <div class="model-card" onclick="selectModel(this)">
+                    <div class="model-name">${model.name}</div>
+                    <div class="model-meta">
+                        <div><span>Source:</span> <span>${model.source}</span></div>
+                        <div><span>Tests:</span> <span>${model.total}</span></div>
+                    </div>
+                    <div class="model-stats">
+                        <div class="stat-box">
+                            <div class="stat-num">${model.total}</div>
+                            <div class="stat-label">Prompts</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-num">${model.passed}/${model.total}</div>
+                            <div class="stat-label">Passed</div>
+                        </div>
+                    </div>
+                    <div class="keywords">
+                        <div class="keyword-label">Status</div>
+                        <div class="keyword-list">
+                            <span class="keyword-tag good">Active</span>
+                            <span class="keyword-tag">${Math.round((model.passed/model.total)*100)}%</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectModel(element) {
+            document.querySelectorAll('.model-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function populateModelSelect(modelMap) {
+            const select = document.querySelector('select');
+            const models = Object.values(modelMap);
+            
+            // Clear existing options (keep first two)
+            while (select.options.length > 2) {
+                select.remove(2);
+            }
+            
+            models.forEach(model => {
+                if (!Array.from(select.options).find(o => o.value === model.name)) {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = model.name;
+                    select.appendChild(option);
                 }
             });
         }
 
-        function updatePieCharts(modelStats) {
-            const container = document.getElementById('pieChartsContainer');
-            container.innerHTML = '';
-
-            Object.keys(modelStats).forEach((model, idx) => {
-                const stats = modelStats[model];
-                const passed = stats.passed;
-                const failed = stats.total - stats.passed;
-
-                const div = document.createElement('div');
-                div.className = 'pie-container';
-                div.innerHTML = `
-                    <div class="pie-label">${model}</div>
-                    <canvas id="pieChart${idx}" style="max-height: 250px;"></canvas>
-                `;
-                container.appendChild(div);
-
-                setTimeout(() => {
-                    const ctx = document.getElementById(`pieChart${idx}`);
-                    if (!ctx) return;
-
-                    new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Passed', 'Failed'],
-                            datasets: [{
-                                data: [passed, failed],
-                                backgroundColor: ['#00c864', '#ff6464'],
-                                borderColor: ['#00c864', '#ff6464'],
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    labels: { color: '#b0b0d0' }
-                                }
-                            }
-                        }
-                    });
-                }, 100);
-            });
-        }
-
-        function updateReportPage() {
-            if (!reportData || !reportData.sessions) {
-                document.getElementById('reportContainer').innerHTML = '<div class="no-data">No test data available</div>';
+        function updateResultsTable(results) {
+            const tbody = document.getElementById('resultsBody');
+            
+            if (results.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">No test results yet</td></tr>';
                 return;
             }
 
-            let html = '';
-            let testIndex = 0;
-
-            reportData.sessions.forEach(session => {
-                session.results.forEach(result => {
-                    testIndex++;
-                    const status = result.passed 
-                        ? '<span class="badge badge-pass">✅ PASSED</span>'
-                        : '<span class="badge badge-fail">❌ FAILED</span>';
-                    
-                    const time = result.timestamp 
-                        ? new Date(result.timestamp).toLocaleString()
-                        : 'N/A';
-
-                    html += `
-                        <div class="report-item">
-                            <h4>Test #${testIndex}: ${result.prompt_name}</h4>
-                            <div class="meta">
-                                <div class="meta-item">
-                                    <span class="meta-label">Status</span>
-                                    <span class="meta-value">${status}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Model</span>
-                                    <span class="meta-value">${result.model_name}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Return Code</span>
-                                    <span class="meta-value"><code>${result.return_code}</code></span>
-                                </div>
-                                <div class="meta-item">
-                                    <span class="meta-label">Time</span>
-                                    <span class="meta-value">${time}</span>
-                                </div>
-                            </div>
-                            <div style="border-top: 1px solid #2a2a4e; padding-top: 16px; margin-top: 16px;">
-                                <div style="margin-bottom: 12px;">
-                                    <span style="color: #7a7a9e; font-size: 0.9em;">Prompt:</span>
-                                    <div style="color: #b0b0d0; margin-top: 8px;">${result.prompt_text}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-
-            document.getElementById('reportContainer').innerHTML = html;
-        }
-
-        function updateAnalysisPage() {
-            if (!analysisData || !analysisData.analyses || analysisData.analyses.length === 0) {
-                document.getElementById('analysisContainer').innerHTML = '<div class="no-data">No analysis data available</div>';
-                return;
-            }
-
-            let html = '';
-
-            analysisData.analyses.forEach((analysis, idx) => {
-                const score = analysis.overall_score || 0;
-                const scoreClass = score >= 7 ? 'score-high' : score >= 4 ? 'score-medium' : 'score-low';
-                const status = analysis.passed 
-                    ? '<span class="badge badge-pass">✅ PASSED</span>'
-                    : '<span class="badge badge-warning">⚠️ FAILED</span>';
-
-                const time = analysis.timestamp 
-                    ? new Date(analysis.timestamp).toLocaleString()
+            tbody.innerHTML = results.slice(-20).reverse().map(result => {
+                const status = result.passed 
+                    ? '<span class="badge badge-pass">✅ Passed</span>'
+                    : '<span class="badge badge-fail">❌ Failed</span>';
+                
+                const time = result.timestamp 
+                    ? new Date(result.timestamp).toLocaleTimeString()
                     : 'N/A';
 
-                html += `
-                    <div class="report-item">
-                        <h4>Analysis #${idx + 1}: ${analysis.prompt_name}</h4>
-                        <div class="meta">
-                            <div class="meta-item">
-                                <span class="meta-label">Quality Score</span>
-                                <span class="meta-value"><span class="score ${scoreClass}">${score}/10</span></span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Status</span>
-                                <span class="meta-value">${status}</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Model</span>
-                                <span class="meta-value">${analysis.model_name}</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Judge Model</span>
-                                <span class="meta-value">${analysisData.judge_model || 'Unknown'}</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Analyzed</span>
-                                <span class="meta-value">${time}</span>
-                            </div>
-                        </div>
+                return `
+                    <tr>
+                        <td><strong>${result.prompt_name}</strong></td>
+                        <td>${result.model_name}</td>
+                        <td>${status}</td>
+                        <td><code>${result.return_code}</code></td>
+                        <td>${time}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
-                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #2a2a4e;">
-                            <div style="margin-bottom: 16px;">
-                                <div style="color: #7a7a9e; font-size: 0.9em; margin-bottom: 8px;">Strengths:</div>
-                                <div style="color: #00c864;">
-                                    ${(analysis.strengths || []).map(s => `• ${s}`).join('<br>')}
-                                </div>
-                            </div>
-                            
-                            <div style="margin-bottom: 16px;">
-                                <div style="color: #7a7a9e; font-size: 0.9em; margin-bottom: 8px;">Issues:</div>
-                                <div style="color: #ff6464;">
-                                    ${(analysis.issues || []).map(i => `• ${i}`).join('<br>')}
-                                </div>
-                            </div>
+        function updateAnalysisTable(analyses) {
+            const tbody = document.getElementById('analysisBody');
+            
+            if (analyses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-data">No analyses yet</td></tr>';
+                return;
+            }
 
-                            <div class="verdict">
-                                <strong>Verdict:</strong> ${analysis.verdict || 'No verdict available'}
+            tbody.innerHTML = analyses.slice(-20).reverse().map(analysis => {
+                const score = analysis.overall_score || 0;
+                const scoreClass = score >= 7 ? 'high' : score >= 4 ? 'medium' : 'low';
+                const status = analysis.passed 
+                    ? '<span class="badge badge-pass">✅</span>'
+                    : '<span class="badge badge-warning">⚠️</span>';
+
+                return `
+                    <tr>
+                        <td><strong>${analysis.prompt_name}</strong></td>
+                        <td>${analysis.model_name}</td>
+                        <td><span class="score ${scoreClass}">${score}/10</span></td>
+                        <td>${status}</td>
+                        <td>${analysis.verdict || 'N/A'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateCharts() {
+            const chart = document.getElementById('promptChart');
+            const summary = analysisData.summary;
+
+            if (!summary.by_prompt) return;
+
+            chart.innerHTML = Object.entries(summary.by_prompt).map(([prompt, stats]) => {
+                const width = (stats.avg_score / 10) * 100;
+                return `
+                    <div class="bar-item">
+                        <div class="bar-label">${prompt}</div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: ${width}%">
+                                ${stats.avg_score.toFixed(1)}/10
                             </div>
                         </div>
                     </div>
                 `;
-            });
-
-            document.getElementById('analysisContainer').innerHTML = html;
+            }).join('');
         }
 
-        function switchPage(pageName) {
-            // Update active nav item
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+        function updateAnalysis(modelKey) {
+            const content = document.getElementById('analysisContent');
+            const empty = document.getElementById('emptyState');
+            
+            if (!modelKey) {
+                content.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            content.style.display = 'block';
+            empty.style.display = 'none';
+
+            let filtered = analysisData.analyses;
+            if (modelKey !== 'all') {
+                filtered = analysisData.analyses.filter(a => a.model_name === modelKey);
+            }
+
+            if (filtered.length === 0) {
+                document.getElementById('promptDetails').innerHTML = '<tr><td colspan="3" class="no-data">No analyses for this model</td></tr>';
+                document.getElementById('totalVal').textContent = '0';
+                document.getElementById('avgScoreVal').textContent = '0/10';
+                document.getElementById('passRateVal').textContent = '0%';
+                return;
+            }
+
+            const passed = filtered.filter(a => a.passed).length;
+            const scores = filtered.map(a => a.overall_score || 0).filter(s => s > 0);
+            const avgScore = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : 0;
+            const passRate = Math.round((passed / filtered.length) * 100);
+
+            document.getElementById('totalVal').textContent = filtered.length;
+            document.getElementById('avgScoreVal').textContent = avgScore + '/10';
+            document.getElementById('passRateVal').textContent = passRate + '%';
+
+            const promptHtml = filtered.map(a => `
+                <tr>
+                    <td><strong>${a.prompt_name}</strong></td>
+                    <td><span class="score ${a.overall_score >= 7 ? 'high' : a.overall_score >= 4 ? 'medium' : 'low'}">${a.overall_score}/10</span></td>
+                    <td><span class="badge ${a.passed ? 'badge-pass' : 'badge-warning'}">${a.passed ? '✅ Pass' : '⚠️ Fail'}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('promptDetails').innerHTML = promptHtml;
+        }
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-
-            // Update active page
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageName).classList.add('active');
         }
 
-        // Load data on startup and every 5 seconds
+        function downloadReport() {
+            const data = {
+                report: reportData,
+                analysis: analysisData,
+                generated: new Date().toISOString()
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `litelm-report-${new Date().getTime()}.json`;
+            a.click();
+        }
+
+        // Load data on page load
         loadData();
+        
+        // Auto-refresh every 5 seconds
         setInterval(loadData, 5000);
     </script>
 </body>
 </html>"""
+
 
 # ==========================================
 # WEB SERVER
@@ -838,33 +1114,33 @@ class DashboardHandler(BaseHTTPRequestHandler):
         
         if self.path == "/":
             self.send_response(200)
-            self.send_header("Content-type", "text/html")
+            self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(DASHBOARD_HTML.encode())
+            self.wfile.write(DASHBOARD_HTML.encode('utf-8'))
         
         elif self.path == "/api/report":
             self.send_response(200)
-            self.send_header("Content-type", "application/json")
+            self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
             
             try:
-                with open(REPORT_FILE, "r") as f:
+                with open(REPORT_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                self.wfile.write(json.dumps(data).encode())
+                self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
             except FileNotFoundError:
-                self.wfile.write(json.dumps({"sessions": []}).encode())
+                self.wfile.write(json.dumps({"sessions": []}).encode('utf-8'))
         
         elif self.path == "/api/analysis":
             self.send_response(200)
-            self.send_header("Content-type", "application/json")
+            self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
             
             try:
-                with open(ANALYSIS_FILE, "r") as f:
+                with open(ANALYSIS_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                self.wfile.write(json.dumps(data).encode())
+                self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
             except FileNotFoundError:
-                self.wfile.write(json.dumps({"analyses": [], "summary": {}}).encode())
+                self.wfile.write(json.dumps({"analyses": [], "summary": {}}).encode('utf-8'))
         
         else:
             self.send_response(404)
